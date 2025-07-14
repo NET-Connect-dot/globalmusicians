@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GlobalMusicians: Connect with musicians worldwide, register, and find bandmates.">
+  <meta name="keywords" content="musician networking, global musicians, band finder">
+  <title>GlobalMusicians - Connect with Musicians Worldwide</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background-color: #1db954;
+      padding: 1rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #111;
+    }
+    main {
+      flex: 1;
+      padding: 2rem;
+      text-align: center;
+    }
+    #map {
+      height: 500px;
+      margin: 2rem auto;
+      width: 100%;
+      max-width: 1000px;
+      border-radius: 10px;
+    }
+    .cta-button {
+      background-color: #0066cc;
+      color: #fff;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .cta-button:hover {
+      background-color: #0077e6;
+    }
+  </style>
+</head>
+<body>
+  <header>GlobalMusicians - Join the Global Music Community!</header>
+  <main>
+    <h2>Find Musicians Near You</h2>
+    <button class="cta-button" onclick="location.href='register.html'">Join the Map</button>
+    <div id="map"></div>
+  </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9r6tG0qI3z3kZ8g1YV+6mQRaF8hZ8UqD8p0=" crossorigin=""></script>
+  <script>
+    const map = L.map('map').setView([0, 0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    const musicians = JSON.parse(localStorage.getItem('musicians') || '[]');
+    musicians.forEach(musician => {
+      if (musician.lat && musician.lng) {
+        L.marker([musician.lat, musician.lng])
+          .addTo(map)
+          .bindPopup(`<b>${musician.name}</b><br>${musician.instrument} - ${musician.genre}<br>${musician.city}<br><a href="profile.html?name=${encodeURIComponent(musician.name)}">View Profile</a>`);
+      }
+    });
+  </script>
+</body>
+</html>
