@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GlobalMusicians: Connect with musicians worldwide, register, and find bandmates.">
+  <meta name="keywords" content="musician networking, global musicians, band finder">
+  <title>GlobalMusicians - Connect with Musicians Worldwide</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background-color: #1db954;
+      padding: 1rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #111;
+    }
+    main {
+      flex: 1;
+      padding: 2rem;
+      text-align: center;
+    }
+    #map {
+      height: 500px;
+      margin: 2rem auto;
+      width: 100%;
+      max-width: 1000px;
+      border-radius: 10px;
+    }
+    .cta-button {
+      background-color: #0066cc;
+      color: #fff;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .cta-button:hover {
+      background-color: #0077e6;
+    }
+  </style>
+</head>
+<body>
+  <header>GlobalMusicians - Join the Global Music Community!</header>
+  <main>
+    <h2>Find Musicians Near You</h2>
+    <button class="cta-button" onclick="location.href='register.html'">Join the Map</button>
+    <div id="map"></div>
+  </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9r6tG0qI3z3kZ8g1YV+6mQRaF8hZ8UqD8p0=" crossorigin=""></script>
+  <script>
+    const map = L.map('map').setView([0, 0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    const musicians = JSON.parse(localStorage.getItem('musicians') || '[]');
+    musicians.forEach(musician => {
+      if (musician.lat && musician.lng) {
+        L.marker([musician.lat, musician.lng])
+          .addTo(map)
+          .bindPopup(`<b>${musician.name}</b><br>${musician.instrument} - ${musician.genre}<br>${musician.city}<br><a href="profile.html?name=${encodeURIComponent(musician.name)}">View Profile</a>`);
+      }
+    });
+  </script>
+</body>
+</html>
+register.html (Форма регистрации)
+html
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlobalMusicians - Register</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background-color: #1db954;
+      padding: 1rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #111;
+    }
+    main {
+      flex: 1;
+      padding: 2rem;
+      text-align: center;
+    }
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    input, select, textarea, button {
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #0066cc;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0077e6;
+    }
+  </style>
+</head>
+<body>
+  <header>GlobalMusicians - Register</header>
+  <main>
+    <h2>Join the Global Music Community</h2>
+    <form id="register-form">
+      <input type="text" name="name" placeholder="Name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <select name="instrument" required>
+        <option value="" disabled selected>Select Instrument</option>
+        <option value="Guitar">Guitar</option>
+        <option value="Drums">Drums</option>
+        <option value="Vocals">Vocals</option>
+        <option value="Bass">Bass</option>
+        <option value="Keyboard">Keyboard</option>
+      </select>
+      <select name="genre" required>
+        <option value="" disabled selected>Select Genre</option>
+        <option value="Rock">Rock</option>
+        <option value="Jazz">Jazz</option>
+        <option value="Pop">Pop</option>
+        <option value="Hip-Hop">Hip-Hop</option>
+        <option value="Classical">Classical</option>
+      </select>
+      <input type="text" name="city" placeholder="City" required>
+      <input type="number" name="lat" placeholder="Latitude (optional)">
+      <input type="number" name="lng" placeholder="Longitude (optional)">
+      <textarea name="bio" placeholder="Bio (optional)"></textarea>
+      <input type="url" name="social" placeholder="SoundCloud/Spotify Link (optional)">
+      <label><input type="checkbox" name="collaboration"> Open to jam sessions</label>
+      <textarea name="session_ideas" placeholder="Collaboration ideas (e.g., looking for a drummer for jazz)"></textarea>
+      <button type="submit">Register</button>
+    </form>
+  </main>
+  <script>
+    document.getElementById('register-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const musician = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        password: formData.get('password'), // Hash in production
+        instrument: formData.get('instrument'),
+        genre: formData.get('genre'),
+        city: formData.get('city'),
+        lat: parseFloat(formData.get('lat')) || null,
+        lng: parseFloat(formData.get('lng')) || null,
+        bio: formData.get('bio'),
+        social: formData.get('social'),
+        collaboration: formData.get('collaboration') === 'on',
+        session_ideas: formData.get('session_ideas')
+      };
+      let musicians = JSON.parse(localStorage.getItem('musicians') || '[]');
+      musicians.push(musician);
+      localStorage.setItem('musicians', JSON.stringify(musicians));
+      alert('Registration successful! You are now on the map.');
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>
+profile.html (Профиль музыканта)
+html
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlobalMusicians - Musician Profile</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min
